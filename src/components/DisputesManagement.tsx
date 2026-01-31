@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, HelpCircle, Upload, Send, Paperclip, X, Eye } from 'lucide-react';
+import { ArrowLeft, HelpCircle, Upload, Send, Paperclip, X, Eye, Plus } from 'lucide-react';
+import { CreateDisputeModal } from '@/components/CreateDisputeModal';
 
 interface Dispute {
   id: string;
@@ -43,6 +44,7 @@ export function DisputesManagement() {
   const [newMessage, setNewMessage] = useState('');
   const [filter, setFilter] = useState<'all' | 'open' | 'under_review' | 'resolved'>('all');
   const [explanation, setExplanation] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, category: string) => {
     const files = Array.from(e.target.files || []);
@@ -146,19 +148,36 @@ export function DisputesManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Create Dispute Modal */}
+      <CreateDisputeModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => {}}
+        userRole="seller"
+      />
+
       {/* Header */}
       <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#3d1a7a]">⚠️ Dispute Management</h1>
           <p className="text-gray-600">Manage and resolve order disputes</p>
         </div>
-        <button
-          onClick={() => alert('Dispute Help:\n\n1. Review dispute details\n2. Upload evidence\n3. Communicate with admin\n4. Track resolution status')}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 border-2 border-gray-200 rounded-nulllg font-semibold text-sm hover:bg-gray-200 transition"
-        >
-          <HelpCircle size={16} />
-          Help Guide
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#3d1a7a] text-white rounded-lg font-semibold text-sm hover:bg-[#250e52] transition"
+          >
+            <Plus size={16} />
+            Create Dispute
+          </button>
+          <button
+            onClick={() => alert('Dispute Help:\n\n1. Review dispute details\n2. Upload evidence\n3. Communicate with admin\n4. Track resolution status')}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 border-2 border-gray-200 rounded-lg font-semibold text-sm hover:bg-gray-200 transition"
+          >
+            <HelpCircle size={16} />
+            Help Guide
+          </button>
+        </div>
       </div>
 
       {/* Stats Grid */}

@@ -1,7 +1,8 @@
-import { AlertTriangleIcon, CheckCircleIcon, LoaderIcon, ClockIcon, ChevronRightIcon } from '@/components/icons';
+import { AlertTriangleIcon, CheckCircleIcon, LoaderIcon, ClockIcon, ChevronRightIcon, PlusIcon } from '@/components/icons';
 import { useState, useCallback } from 'react';
 import { api } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+import { CreateDisputeModal } from '@/components/CreateDisputeModal';
 
 interface BuyerDisputesProps {
   disputes: any[];
@@ -15,6 +16,7 @@ export function BuyerDisputes({ disputes, loading, error, onRefresh }: BuyerDisp
   const [selectedDispute, setSelectedDispute] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleSendMessage = useCallback(async (disputeId: string) => {
     if (!newMessage.trim()) {
@@ -112,7 +114,22 @@ export function BuyerDisputes({ disputes, loading, error, onRefresh }: BuyerDisp
           <h2 className="text-2xl font-bold text-[#3d1a7a]">My Disputes</h2>
           <p className="text-sm text-gray-500">{disputes.length} dispute(s)</p>
         </div>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-[#3d1a7a] text-white rounded-lg hover:bg-[#250e52] transition font-medium"
+        >
+          <PlusIcon size={18} />
+          Create Dispute
+        </button>
       </div>
+
+      {/* Create Dispute Modal */}
+      <CreateDisputeModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => onRefresh?.()}
+        userRole="buyer"
+      />
 
       <div className="space-y-4">
         {disputes.length > 0 ? (

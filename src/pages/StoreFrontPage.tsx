@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { api } from '@/services/api';
+
+const SUPABASE_URL = "https://pxyyncsnjpuwvnwyfdwx.supabase.co";
 
 interface StorefrontProduct {
   id: string;
@@ -8,13 +9,18 @@ interface StorefrontProduct {
   description?: string;
   price?: number;
   images?: string[];
+  currency?: string;
+  is_available?: boolean;
+  availability_note?: string;
 }
 
 interface StorefrontData {
   id: string;
   name: string;
   slug: string;
-  status: 'INACTIVE' | 'ACTIVE' | 'FROZEN';
+  status: string;
+  bio?: string;
+  logo?: string;
   products: StorefrontProduct[];
 }
 
@@ -29,13 +35,28 @@ export function StoreFrontPage() {
     async function load() {
       if (!storeSlug) return;
       setLoading(true);
-      const res = await api.getStorefront(storeSlug);
-      if (!mounted) return;
-      if (res.success && res.data) {
-        setStore(res.data as unknown as StorefrontData);
-        setError(null);
-      } else {
-        setError(res.error || 'Failed to load store');
+      
+      try {
+        // Call Supabase edge function directly
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/storefront-api/store/${encodeURIComponent(storeSlug)}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        const res = await response.json();
+        
+        if (!mounted) return;
+        if (res.success && res.data) {
+          setStore(res.data as StorefrontData);
+          setError(null);
+        } else {
+          setError(res.error || 'Failed to load store');
+        }
+      } catch (err) {
+        if (mounted) {
+          setError('Failed to connect to server');
+        }
       }
       setLoading(false);
     }
