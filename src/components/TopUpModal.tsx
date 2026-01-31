@@ -78,8 +78,6 @@ export function TopUpModal({ isOpen, onClose, onSuccess }: TopUpModalProps) {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   const quickAmounts = [500, 1000, 2500, 5000, 10000, 20000];
 
   const paymentMethods: PaymentMethodOption[] = [
@@ -267,6 +265,8 @@ export function TopUpModal({ isOpen, onClose, onSuccess }: TopUpModalProps) {
     }
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
