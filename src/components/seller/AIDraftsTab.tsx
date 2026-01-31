@@ -28,18 +28,18 @@ export function AIDraftsTab() {
     }
 
     setGenerating(true);
-    const product = await supabaseApi.generateProductWithAI(
+    const result = await supabaseApi.generateProductWithAI(
       generateForm.description,
       generateForm.imageUrl || undefined
     );
     setGenerating(false);
 
-    if (product) {
+    if (result.product) {
       setShowGenerateModal(false);
       setGenerateForm({ description: "", imageUrl: "" });
       await loadDrafts();
     } else {
-      alert("Failed to generate product. Please try again.");
+      alert(result.error || "Failed to generate product. Please try again.");
     }
   };
 
