@@ -13,6 +13,7 @@ import { LegalPage } from "./pages/LegalPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { StoreFrontPage } from "./pages/StoreFrontPage";
 import { ProductDetailPage } from "./pages/ProductDetailPage";
+import { BuyPage } from "./pages/BuyPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/pay/:transactionId" element={<PaymentPage />} />
+              <Route path="/buy/:linkId" element={<BuyPage />} />
               <Route path="/store/:storeSlug" element={<StoreFrontPage />} />
               <Route path="/store/:storeSlug/product/:productId" element={<ProductDetailPage />} />
               <Route path="/legal" element={<LegalPage />} />
