@@ -233,20 +233,31 @@ export const supabaseApi = {
   },
 
   // AI generation
-  async generateProductWithAI(description: string, imageUrl?: string): Promise<Product | null> {
+  async generateProductWithAI(description: string, imageUrl?: string): Promise<{ product: Product | null; error?: string }> {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return null;
-
-    const { data, error } = await supabase.functions.invoke("ai-generate-product", {
-      body: { description, imageUrl },
-    });
-
-    if (error) {
-      console.error("AI generation error:", error);
-      return null;
+    if (!session) {
+      return { product: null, error: "Please log in to generate products with AI" };
     }
 
-    return data?.product as Product | null;
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-generate-product", {
+        body: { description, imageUrl },
+      });
+
+      if (error) {
+        console.error("AI generation error:", error);
+        return { product: null, error: error.message || "Failed to generate product" };
+      }
+
+      if (data?.error) {
+        return { product: null, error: data.error };
+      }
+
+      return { product: data?.product as Product | null };
+    } catch (err) {
+      console.error("AI generation exception:", err);
+      return { product: null, error: "Network error. Please try again." };
+    }
   },
 
   // Wallet methods
