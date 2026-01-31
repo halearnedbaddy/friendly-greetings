@@ -130,10 +130,9 @@ export function AdminUsers() {
         if (!promotingUser) return;
         
         // Update user_roles table (this is the source of truth for authorization)
-        const upperRole = newRole.toUpperCase() as 'ADMIN' | 'BUYER' | 'SELLER';
         const { error: roleError } = await supabase
             .from('user_roles')
-            .update({ role: upperRole })
+            .update({ role: newRole })
             .eq('user_id', promotingUser.id);
 
         if (roleError) throw roleError;
@@ -157,7 +156,7 @@ export function AdminUsers() {
             .from('profiles')
             .update({ 
                 is_active: true, 
-                account_status: 'ACTIVE',
+                account_status: 'active',
                 updated_at: new Date().toISOString(),
             })
             .eq('user_id', userId);
@@ -181,7 +180,7 @@ export function AdminUsers() {
             .from('profiles')
             .update({ 
                 is_active: false, 
-                account_status: 'SUSPENDED',
+                account_status: 'suspended',
                 updated_at: new Date().toISOString(),
             })
             .eq('user_id', userId);

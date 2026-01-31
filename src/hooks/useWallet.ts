@@ -24,7 +24,7 @@ interface WalletTransaction {
   reference: string;
   status: string;
   payment_method: string;
-  created_at: string;
+  created_at: string | null;
 }
 
 export function useWallet() {
