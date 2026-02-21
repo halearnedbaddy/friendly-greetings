@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.jpeg";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -28,9 +29,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <a href="#" className="flex items-center gap-2 font-display text-[1.4rem] font-extrabold text-primary-dark no-underline">
-            <div className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] bg-gradient-to-br from-primary to-green-dark text-white font-black text-lg shadow-[0_4px_12px_hsl(155_100%_42%/0.3)]">
-              P
-            </div>
+            <img src={logo} alt="PayLoom" className="h-[38px] w-[38px] rounded-[10px] object-cover" />
             PayLoom Instants
           </a>
 

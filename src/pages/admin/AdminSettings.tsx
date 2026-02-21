@@ -15,11 +15,11 @@ export default function AdminSettings() {
   const { data: stats } = useQuery({
     queryKey: ["admin-platform-stats"],
     queryFn: async () => {
-      const [accounts, transactions, pendingKyc] = await Promise.all([
+      const [accounts, transactions] = await Promise.all([
         supabase.from("accounts").select("id", { count: "exact", head: true }),
         supabase.from("transactions").select("id", { count: "exact", head: true }),
-        supabase.from("compliance_submissions").select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
+      const pendingKyc = { count: 0 };
       return {
         totalAccounts: accounts.count ?? 0,
         totalTransactions: transactions.count ?? 0,

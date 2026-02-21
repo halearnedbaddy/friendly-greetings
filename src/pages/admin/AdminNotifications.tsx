@@ -5,6 +5,15 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 
+interface AdminNotification {
+  id: string;
+  type: string;
+  title: string;
+  message: string | null;
+  read: boolean;
+  created_at: string | null;
+}
+
 const typeConfig: Record<string, { icon: typeof Bell; color: string; bg: string }> = {
   compliance_submitted: { icon: FileCheck, color: "text-yellow-400", bg: "bg-yellow-500/10" },
   account_approved: { icon: CheckCircle, color: "text-primary", bg: "bg-primary/10" },
@@ -19,24 +28,31 @@ const defaultIcon = { icon: Bell, color: "text-white/50", bg: "bg-white/5" };
 export default function AdminNotifications() {
   const queryClient = useQueryClient();
 
-  const { data: notifications = [], isLoading } = useQuery({
+  const { data: notifications = [], isLoading } = useQuery<AdminNotification[]>({
     queryKey: ["admin-notifications"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("admin_notifications")
+        .from("notifications")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []).map((n: any) => ({
+        id: n.id,
+        type: n.type ?? "general",
+        title: n.title ?? "",
+        message: n.message ?? null,
+        read: n.is_read ?? false,
+        created_at: n.created_at,
+      }));
     },
   });
 
   const markRead = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("admin_notifications")
-        .update({ read: true })
+        .from("notifications")
+        .update({ is_read: true })
         .eq("id", id);
       if (error) throw error;
     },
@@ -46,9 +62,9 @@ export default function AdminNotifications() {
   const markAllRead = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
-        .from("admin_notifications")
-        .update({ read: true })
-        .eq("read", false);
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("is_read", false);
       if (error) throw error;
     },
     onSuccess: () => {
